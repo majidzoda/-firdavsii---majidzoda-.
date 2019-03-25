@@ -1,0 +1,40 @@
+package n26.api;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+
+import org.testng.annotations.Test;
+
+import junit.framework.TestCase;
+
+public class ApiTypes extends TestCase {
+	String baseURL = "http://127.0.0.1/n26/types.php";
+	Transaction transaction;
+
+	
+	
+
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * without optional parameter "parent_id":
+	 * 
+	 * transaction_id 	10
+ 	 * amount 			5000.00
+	 * type 			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 201,
+	 * response 		{"status": "ok"}
+	 */
+	@Test
+	public void testTransaction_without_parent_id() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("transaction_id", 10)
+		.when()
+		.get(baseURL).then()
+		.statusCode(202).assertThat()
+		.body("", hasItems(10));
+	}
+}

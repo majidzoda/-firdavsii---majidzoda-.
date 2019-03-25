@@ -1,0 +1,13 @@
+package n26.api;
+import static io.restassured.RestAssured.*;
+
+import org.testng.annotations.Test;
+
+import junit.framework.TestCase;
+
+public class ApiTest extends TestCase{
+	@Test
+	public void testUrl() {
+		given().get("https://us-central1-midway-b4b7a.cloudfunctions.net/").then().statusCode(200);
+	}
+}

@@ -1,0 +1,106 @@
+package n26.api;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.core.IsEqual.equalTo;
+
+import org.testng.annotations.Test;
+
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import junit.framework.TestCase;
+
+public class ApiTest extends TestCase{
+	String baseURL = "http://127.0.0.1/n26/";
+
+	
+	
+
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * without optional parameter "parent_id" and the following parameters:
+	 * 
+	 * transaction_id 	132354
+ 	 * amount 			11000
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: status 		code 201,
+	 * 				response 	{"status": "ok"}
+	 */
+	@Test
+	public void testTransaction_without_parent_id() {
+		Transaction transaction = Transaction.getInstance(10, 5000.00, "cars", 0);
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(201).assertThat()
+		.body("status", equalTo("ok"));
+	}
+	
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * with optional parameter "parent_id" and the following parameters:
+	 * 
+	 * transaction_id 	132354
+ 	 * amount 			11000
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: status 		code 201,
+	 * 				response 	{"status": "ok"}
+	 */
+	@Test
+	public void testTransaction_with_parent_id() {
+		Transaction transaction = Transaction.getInstance(11, 5000.00, "cars", 10);
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(201).assertThat()
+		.body("status", equalTo("ok"));
+	}
+	
+	
+	
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * with the duplicate "transaction_id" and the following parameters:
+	 * transaction_id	11
+ 	 * amount 			11000
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: status 		code 401,
+	 * 				response 	{"status": "ok"}
+	 */
+	@Test
+	public void testTransaction_without_transaction_id() {
+		Transaction transaction = Transaction.getInstance(11, 5000.00, "cars", 10);
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+	
+	
+	
+}

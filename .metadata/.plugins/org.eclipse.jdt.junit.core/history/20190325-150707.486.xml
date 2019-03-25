@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ApiTest" project="api" tests="18" started="18" failures="0" errors="0" ignored="0">
+  <testsuite name="n26.api.ApiTest" time="3.609">
+    <testcase name="testTransaction_without_parent_id" classname="n26.api.ApiTest" time="1.281"/>
+    <testcase name="testTransaction_with_parent_id" classname="n26.api.ApiTest" time="0.026"/>
+    <testcase name="testTransaction_with_duplicate_transaction_id" classname="n26.api.ApiTest" time="0.036"/>
+    <testcase name="testTransaction_without_transaction_id" classname="n26.api.ApiTest" time="0.024"/>
+    <testcase name="testTransaction_without_transaction_id_and_amount" classname="n26.api.ApiTest" time="0.017"/>
+    <testcase name="testTransaction_with_GET" classname="n26.api.ApiTest" time="0.033"/>
+    <testcase name="testTransaction_with_GET_with_wrong_transaction_id" classname="n26.api.ApiTest" time="0.021"/>
+    <testcase name="testTransaction_with_POST" classname="n26.api.ApiTest" time="0.019"/>
+    <testcase name="testTransaction_with_DELETE" classname="n26.api.ApiTest" time="0.012"/>
+    <testcase name="testTypes" classname="n26.api.ApiTest" time="0.015"/>
+    <testcase name="testTypes_without_types" classname="n26.api.ApiTest" time="0.013"/>
+    <testcase name="testTypes_with_wrong_types" classname="n26.api.ApiTest" time="0.01"/>
+    <testcase name="testTypes_with_POST" classname="n26.api.ApiTest" time="0.048"/>
+    <testcase name="testTypes_with_DELETE" classname="n26.api.ApiTest" time="1.002"/>
+    <testcase name="testSum" classname="n26.api.ApiTest" time="0.021"/>
+    <testcase name="testSum_without_transaction_id" classname="n26.api.ApiTest" time="0.985"/>
+    <testcase name="testSum_with_POST" classname="n26.api.ApiTest" time="0.015"/>
+    <testcase name="testSum_with_DELETE" classname="n26.api.ApiTest" time="0.031"/>
+  </testsuite>
+</testrun>

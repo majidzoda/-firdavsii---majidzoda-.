@@ -1,0 +1,470 @@
+/*
+ *  Author: Firdavsii Majidzoda
+ *  Date: Mon 25th of March 2019
+ *  This file contains test cases to test endpint API for monetary transactions.
+ *  
+ *  Endpoints:
+ *  transaction (PUT)
+ *  transaction (GET)
+ *  types (GET)
+ *  sum (GET)
+ */
+
+package n26.api;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.core.IsEqual.equalTo;
+import org.testng.annotations.Test;
+
+import io.restassured.response.Response;
+import junit.framework.TestCase;
+
+public class ApiTest extends TestCase{
+	String baseURL = "http://127.0.0.1/n26/";
+	Transaction transaction;
+
+	
+	//******************************************* transaction **********************************************
+
+	/**
+	 * Test Case: 1.1
+	 * This method tests "transaction" endpoint with PUT request method
+	 * without optional parameter "parent_id":
+	 * 
+	 * transaction_id 	10
+ 	 * amount 			5000.00
+	 * type 			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 201,
+	 * response 		{"status": "ok"}
+	 */
+	@Test
+	public void testTransaction_without_parent_id() {
+		transaction = Transaction.getInstance(10, 5000.00, "cars", 0);
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(201).assertThat()
+		.body("status", equalTo("ok"));
+	}
+	
+	/**
+	 * Test Case: 1.2
+	 * This method tests "transaction" endpoint with PUT request method
+	 * with optional parameter "parent_id":
+	 * 
+	 * transaction_id 	11
+ 	 * amount 			10000.00
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: 
+	 * status 			code 201,
+	 * response 		{"status": "ok"}
+	 */
+	@Test
+	public void testTransaction_with_parent_id() {
+		transaction = Transaction.getInstance(11, 10000.00, "shopping", 10);
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(201).assertThat()
+		.body("status", equalTo("ok"));
+	}
+	
+	
+	
+	/**
+	 * Test Case: 1.3
+	 * This method tests "transaction" endpoint with PUT request method
+	 * with the duplicate "transaction_id" (Same as Test Case: 1.2):
+	 * 
+	 * transaction_id	11
+ 	 * amount 			10000
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error": "Duplicate transaction_id"}
+	 */
+	@Test
+	public void testTransaction_with_duplicate_transaction_id() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("Duplicate transaction_id"));
+	}
+	
+	/**
+	 * Test Case: 1.4
+	 * This method tests "transaction" endpoint with PUT request method
+	 * without mandatory "transaction_id":
+	 * 
+ 	 * amount 			10000
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error": "missing argument(s)"}
+	 */
+	@Test
+	public void testTransaction_without_transaction_id() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+	
+	/**
+	 * Test Case: 1.5
+	 * This method tests "transaction" endpoint with PUT request method
+	 * without mandatory "transaction_id" and :amount:
+	 * 
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error": "missing argument(s)"}
+	 */
+	@Test
+	public void testTransaction_without_transaction_id_and_amount() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+	
+	/**
+	 * Test Case: 1.6
+	 * This method tests "transaction" endpoint with GET request method:
+	 * 
+	 * transaction_id		11	
+	 * 
+	 * Expectation:  		
+	 * status				code 200,
+	 * response 			{"amount": 10000, "type": "shopping", "parent_id": 10}
+	 */
+	@Test
+	public void testTransaction_with_GET() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(200).assertThat()
+		.body("amount", equalTo(10000))
+		.body("type", equalTo("shopping"))
+		.body("parent_id", equalTo(10));
+	}
+	
+	/**
+	 * Test Case: 1.7
+	 * This method tests "transaction" endpoint with GET request method 
+	 * and wrong transaction_id that does not exist:
+	 * 
+	 * transaction_id		11	
+	 * 
+	 * Expectation:  		
+	 * status				code 200,
+	 * response 			{"amount": 10000, "type": "shopping", "parent_id": 10}
+	 */
+	@Test
+	public void testTransaction_with_GET_with_wrong_transaction_id() {
+		long random_transaction_id = 100;
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("transaction_id", random_transaction_id)
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("No transaction found with transaction_id: "+random_transaction_id));
+	}
+	
+	/**
+	 * Test Case: 1.8
+	 * This method tests "transaction" endpoint with POST request method:
+	 * 
+	 * transaction_id 	11
+ 	 * amount 			10000.00
+	 * type 			shopping
+	 * parent_id 		10			
+	 * 
+	 * Expectation: status 		code 401,
+	 * 				response 	{"error": "missing argument(s)"}
+	 */
+	@Test
+	public void testTransaction_with_POST() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "POST")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("method called: POST. Method expected: PUT or GET"));
+	}
+	
+	/**
+	 * Test Case: 1.9
+	 * This method tests "transaction" endpoint with DELETE request method:
+	 * 
+	 * transaction_id		11	
+	 * 
+	 * Expectation:  		
+	 * status				code 401,
+	 * response 			{"error": "method called: DELETE. Method expected: PUT or GET"}
+	 */
+	@Test
+	public void testTransaction_with_DELETE() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "DELETE")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("method called: DELETE. Method expected: PUT or GET"));
+	}
+	
+	
+	//******************************************* types **********************************************
+	/**
+	 * Test Case: 2.1
+	 * This method tests "types" endpoint with GET request method:
+	 * 
+	 * types			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 200,
+	 * response 		[10]
+	 */
+	@Test
+	public void testTypes() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("types", "cars")
+		.when()
+		.get(baseURL+"types.php").then()
+		.statusCode(200).assertThat()
+		.body("", hasItems(10));
+	}
+	
+	/**
+	 * Test Case: 2.2
+	 * This method tests "types" endpoint with GET request method
+	 * and without mandatory parameter "types":
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"missing arguments(s)"}
+	 */
+	@Test
+	public void testTypes_without_types() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.when()
+		.get(baseURL+"types.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+	
+	/**
+	 * Test Case: 2.3
+	 * This method tests "types" endpoint with GET request method
+	 * and without mandatory parameter "types":
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"missing arguments(s)"}
+	 */
+	@Test
+	public void testTypes_with_wrong_types() {
+		String random_type = "food";
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("types", random_type)
+		.when()
+		.get(baseURL+"types.php").then()
+		.statusCode(200).assertThat()
+		.body("error", equalTo("No transations found with type: "+random_type));
+	}
+	
+	/**
+	 * Test Case: 2.3
+	 * This method tests "types" endpoint with POST request method:
+	 * 
+	 * types			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"method called: POST. Method expected: GET"}
+	 */
+	@Test
+	public void testTypes_with_POST() {
+		Response r = given()
+		.headers( "X-HTTP-Method-Override",  "POST")
+		.formParam("types", "cars")
+		.when()
+		.get(baseURL+"types.php");
+//		.then()
+//		.statusCode(401).assertThat()
+//		.body("error", equalTo("method called: POST. Method expected: GET"));
+		System.out.println(r.body().asString());
+	}
+	
+	/**
+	 * Test Case: 2.4
+	 * This method tests "types" endpoint with DELETE request method:
+	 * 
+	 * types			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"method called: POST. Method expected: PUT or GET"}
+	 */
+	@Test
+	public void testTypes_with_DELETE() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "DELETE")
+		.formParam("types", "cars")
+		.when()
+		.get(baseURL+"types.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("method called: DELETE. Method expected: GET"));
+	}
+	
+	//******************************************* sum **********************************************
+	/**
+	 * Test Case: 3.1
+	 * This method tests "sum" endpoint with GET request method:
+	 * 
+	 * transaction_id	10
+	 * 
+	 * Expectation: 
+	 * status 			code 200,
+	 * response 		{"sum": 15000}
+	 */
+	@Test
+	public void testSum() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("transaction_id", 10)
+		.when()
+		.get(baseURL+"sum.php").then()
+		.statusCode(200).assertThat()
+		.body("sum", equalTo(15000));
+	}
+	
+	/**
+	 * Test Case: 3.2
+	 * This method tests "sum" endpoint with GET request method
+	 * and without mandatory parameter "transaction_id":
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"missing arguments(s)"}
+	 */
+	@Test
+	public void testSum_without_transaction_id() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.when()
+		.get(baseURL+"sum.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+	
+	/**
+	 * Test Case: 3.3
+	 * This method tests "sum" endpoint with POST request method:
+	 * 
+	 * transaction_id	10
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"method called: POST. Method expected: GET"}
+	 */
+	@Test
+	public void testSum_with_POST() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "POST")
+		.formParam("transaction_id", 10)
+		.when()
+		.get(baseURL+"sum.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("method called: POST. Method expected: GET"));
+	}
+	
+	/**
+	 * Test Case: 3.4
+	 * This method tests "types" endpoint with DELETE request method:
+	 * 
+	 * types			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"method called: POST. Method expected: PUT or GET"}
+	 */
+	@Test
+	public void testSum_with_DELETE() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "DELETE")
+		.formParam("transaction_id", 10)
+		.when()
+		.get(baseURL+"sum.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("method called: DELETE. Method expected: GET"));	
+		
+		
+		// Delete rows
+		deleteRows();
+	}
+		
+		
+	/**
+	 *  This method maintains the execution.
+	 *  It deletes rows in Data base so the code is good for the next execution. 
+	 *  (Otherwise Test Case 1.1 & 1.2 will fail for duplicate transaction_id)
+	 */
+
+	public void deleteRows() {
+		given()
+		.when()
+		.get(baseURL+"deleteRows.php");
+	}
+}

@@ -1,0 +1,95 @@
+package n26.api;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+
+import org.testng.annotations.Test;
+
+import junit.framework.TestCase;
+
+public class ApiSum extends TestCase {
+	String baseURL = "http://127.0.0.1/n26/sum.php";
+	Transaction transaction;
+
+	
+	
+
+	/**
+	 * This method tests "sum" endpoint with GET request method:
+	 * 
+	 * transaction_id	10
+	 * 
+	 * Expectation: 
+	 * status 			code 202,
+	 * response 		{"sum": 15000}
+	 */
+	@Test
+	public void testTypes() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("transaction_id", 11)
+		.when()
+		.get(baseURL).then()
+		.statusCode(202).assertThat()
+		.body("sum", equalTo(10000));
+	}
+	
+	/**
+	 * This method tests "sum" endpoint with GET request method
+	 * and without mandatory parameter "transaction_id":
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"missing arguments(s)"}
+	 */
+	@Test
+	public void testTypes_without_types() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.when()
+		.get(baseURL).then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+	
+	/**
+	 * This method tests "sum" endpoint with POST request method:
+	 * 
+	 * transaction_id	10
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"method called: POST. Method expected: GET"}
+	 */
+	@Test
+	public void testTypes_with_POST() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "POST")
+		.formParam("transaction_id", 10)
+		.when()
+		.get(baseURL).then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("method called: POST. Method expected: GET"));
+	}
+	
+	/**
+	 * This method tests "types" endpoint with DELETE request method:
+	 * 
+	 * types			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 401,
+	 * response 		{"error":"method called: POST. Method expected: PUT or GET"}
+	 */
+	@Test
+	public void testTypes_with_DELETE() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "DELETE")
+		.formParam("transaction_id", 10)
+		.when()
+		.get(baseURL).then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("method called: DELETE. Method expected: GET"));
+	}
+}

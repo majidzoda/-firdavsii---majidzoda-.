@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;t&apos; in &apos;n26.api.ApiTest.testPutTransaction()&apos; to &apos;transaction&apos;&#x0A;- Original project: &apos;api&apos;&#x0A;- Original element: &apos;n26.api.ApiTest.testPutTransaction().t&apos;&#x0A;- Renamed element: &apos;t&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;t&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src\/test\/java&lt;n26.api{ApiTest.java[ApiTest~testPutTransaction@t!754!803!766!766!QTransaction;!0!false" name="transaction" references="true" stamp="1553273234277" version="1.0"/>
+</session>

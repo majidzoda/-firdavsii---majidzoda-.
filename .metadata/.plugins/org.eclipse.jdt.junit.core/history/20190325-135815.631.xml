@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ApiTest.deleteRows" project="api" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testcase name="deleteRows" classname="n26.api.ApiTest" time="1.227"/>
+</testrun>

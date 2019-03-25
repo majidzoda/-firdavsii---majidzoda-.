@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ApiTypes" project="api" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="n26.api.ApiTypes" time="1.011">
+    <testcase name="testTransaction_without_parent_id" classname="n26.api.ApiTypes" time="1.011"/>
+  </testsuite>
+</testrun>

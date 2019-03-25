@@ -1,0 +1,60 @@
+package n26.api;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.core.IsEqual.equalTo;
+
+import org.testng.annotations.Test;
+
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import junit.framework.TestCase;
+
+public class ApiTest extends TestCase{
+	String baseURL = "http://us-central1-midway-b4b7a.cloudfunctions.net/";
+
+	
+	
+//	@Test
+//	public void testPutTransaction() {
+//		Transaction transaction = Transaction.getInstance(10, 5000, "cars", 0);
+//
+//		given()
+//		.headers("Content-Type", ContentType.JSON, "Accept", ContentType.JSON)
+//		.formParam("transaction_id", transaction.getTransaction_id())
+//		.formParam("amount", transaction.getAmount())
+//		.formParam("type", transaction.getType())
+//		.when().get(baseURL+"transaction").then().statusCode(200).assertThat().body("status", equalTo("ok"));
+//	}
+//	
+//	
+//	@Test
+//	public void testPutTransaction_with_parent_id() {
+//		Transaction transaction = Transaction.getInstance(11, 10000, "shopping", 10);
+//
+//		given()
+//		.headers("Content-Type", ContentType.JSON, "Accept", ContentType.JSON)
+//		.formParam("transaction_id", transaction.getTransaction_id())
+//		.formParam("amount", transaction.getAmount())
+//		.formParam("type", transaction.getType())
+//		.formParam("parent_id", transaction.getParent_id())
+//		.when().get(baseURL+"putTransaction").then().statusCode(200).assertThat().body("status", equalTo("ok"));
+//	}
+	
+	@Test
+	public void testPutTransaction_with_parent_id() {
+		Transaction transaction = Transaction.getInstance(11, 10000, "shopping", 10);
+
+		given()
+		.headers("Content-Type", ContentType.JSON, "Accept", ContentType.JSON)
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.when().get("http://127.0.0.1/connectToDb.php").then().statusCode(200).assertThat().body("status", equalTo("ok"));
+	}
+	
+	
+	
+}

@@ -1,0 +1,175 @@
+package n26.api;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.core.IsEqual.equalTo;
+
+import org.testng.annotations.Test;
+
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import junit.framework.TestCase;
+
+public class ApiTest extends TestCase{
+	String baseURL = "http://127.0.0.1/n26/";
+	Transaction transaction;
+
+	
+	
+
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * without optional parameter "parent_id":
+	 * 
+	 * transaction_id 	10
+ 	 * amount 			5000.00
+	 * type 			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 201,
+	 * response 		{"status": "ok"}
+	 */
+	@Test
+	public void testTransaction_without_parent_id() {
+		transaction = Transaction.getInstance(10, 5000.00, "cars", 0);
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(201).assertThat()
+		.body("status", equalTo("ok"));
+	}
+	
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * with optional parameter "parent_id":
+	 * 
+	 * transaction_id 	11
+ 	 * amount 			10000.00
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: 
+	 * status 			code 201,
+	 * response 		{"status": "ok"}
+	 */
+	@Test
+	public void testTransaction_with_parent_id() {
+		transaction = Transaction.getInstance(11, 10000.00, "shopping", 10);
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(201).assertThat()
+		.body("status", equalTo("ok"));
+	}
+	
+	
+	
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * with the duplicate "transaction_id":
+	 * transaction_id	11
+ 	 * amount 			11000
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: status 		code 401,
+	 * 				response 	{"error": "Duplicate transaction_id""}
+	 */
+	@Test
+	public void testTransaction_with_duplicate_transaction_id() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("Duplicate transaction_id"));
+	}
+	
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * without mandatory "transaction_id":
+	 * 
+ 	 * amount 			11000
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: status 		code 401,
+	 * 				response 	{"error": "missing argument(s)"}
+	 */
+	@Test
+	public void testTransaction_without_transaction_id() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("amount", transaction.getAmount())
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+	
+	/**
+	 * This method tests "transaction" endpoint with PUT request method
+	 * without mandatory "transaction_id" and :amount:
+	 * 
+	 * type 			shopping
+	 * parent_id 		10
+	 * 
+	 * Expectation: status 		code 401,
+	 * 				response 	{"error": "missing argument(s)"}
+	 */
+	@Test
+	public void testTransaction_without_transaction_id_and_amount() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "PUT")
+		.formParam("type", transaction.getType())
+		.formParam("parent_id", transaction.getParent_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+	
+	/**
+	 * This method tests "transaction" endpoint with GET request method:
+	 * 
+	 * transaction_id			
+	 * 
+	 * Expectation: status 		code 401,
+	 * 				response 	{"error": "missing argument(s)"}
+	 */
+	@Test
+	public void testTransaction_with_GET() {
+		transaction = Transaction.getInstance();
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("transaction_id", transaction.getTransaction_id())
+		.when()
+		.get(baseURL+"transaction.php").then()
+		.statusCode(202).assertThat()
+		.body("amount", equalTo(10000))
+		.body("type", equalTo("shopping"))
+		.body("parent_id", equalTo(10));
+	}
+}

@@ -1,0 +1,55 @@
+package n26.api;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+
+import org.testng.annotations.Test;
+
+import junit.framework.TestCase;
+
+public class ApiTypes extends TestCase {
+	String baseURL = "http://127.0.0.1/n26/types.php";
+	Transaction transaction;
+
+	
+	
+
+	/**
+	 * This method tests "types" endpoint with GET request method:
+	 * 
+	 * types			cars
+	 * 
+	 * Expectation: 
+	 * status 			code 202,
+	 * response 		[10]
+	 */
+	@Test
+	public void testTypes() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.formParam("types", "cars")
+		.when()
+		.get(baseURL).then()
+		.statusCode(202).assertThat()
+		.body("", hasItems(10));
+	}
+	
+	/**
+	 * This method tests "types" endpoint with GET request method
+	 * and without mandatory parameter "types":
+	 * 
+	 * Expectation: 
+	 * status 			code 202,
+	 * response 		[10]
+	 */
+	@Test
+	public void testTypes_without_types() {
+		given()
+		.headers( "X-HTTP-Method-Override",  "GET")
+		.when()
+		.get(baseURL).then()
+		.statusCode(401).assertThat()
+		.body("error", equalTo("missing argument(s)"));
+	}
+}

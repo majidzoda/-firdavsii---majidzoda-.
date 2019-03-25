@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ApiTest" project="api" tests="5" started="5" failures="0" errors="0" ignored="0">
+  <testsuite name="n26.api.ApiTest" time="1.319">
+    <testcase name="testTransaction_without_parent_id" classname="n26.api.ApiTest" time="1.202"/>
+    <testcase name="testTransaction_with_parent_id" classname="n26.api.ApiTest" time="0.028"/>
+    <testcase name="testTransaction_with_duplicate_transaction_id" classname="n26.api.ApiTest" time="0.046"/>
+    <testcase name="testTransaction_without_transaction_id" classname="n26.api.ApiTest" time="0.027"/>
+    <testcase name="testTransaction_without_transaction_id_and_amount" classname="n26.api.ApiTest" time="0.016"/>
+  </testsuite>
+</testrun>

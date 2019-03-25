@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ApiSum" project="api" tests="4" started="4" failures="0" errors="0" ignored="0">
+  <testsuite name="n26.api.ApiSum" time="1.251">
+    <testcase name="testTypes" classname="n26.api.ApiSum" time="1.176"/>
+    <testcase name="testTypes_without_types" classname="n26.api.ApiSum" time="0.02"/>
+    <testcase name="testTypes_with_POST" classname="n26.api.ApiSum" time="0.034"/>
+    <testcase name="testTypes_with_DELETE" classname="n26.api.ApiSum" time="0.021"/>
+  </testsuite>
+</testrun>
